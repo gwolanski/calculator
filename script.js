@@ -38,3 +38,6 @@ function operate(expression) {
         divide(a,b)
     }
 }
+
+//idea - create a function that adds button pressed to display1 div using innerHTML. put onclick for each button in html that calls the function
+//display result in display2 div
