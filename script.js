@@ -1,3 +1,5 @@
+const expressionDisplay = document.getElementById('display1');
+
 //create functions for the following: add, subtract, multiple, divide
 const add = function(a,b) {
     return a + b;
@@ -41,3 +43,15 @@ function operate(expression) {
 
 //idea - create a function that adds button pressed to display1 div using innerHTML. put onclick for each button in html that calls the function
 //display result in display2 div
+
+function buildExpression (buttonSelect) {
+    if (buttonSelect == 'AC') {
+        expressionDisplay.innerHTML = "";
+    } else {
+        expressionDisplay.innerHTML += buttonSelect;
+    }
+}
+
+function operate() {
+    
+}
