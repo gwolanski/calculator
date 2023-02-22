@@ -3,12 +3,13 @@
     //2.1 convert inputs to numbers
 //3. apply operators to number inputs and display result each time we apply an operator to 2 numbers (PEMDAS doesn't matter at this point)
 
-
 const expressionDisplay = document.getElementById('display1');
+expressionDisplay.innerHTML = "0";
+let expression = expressionDisplay.innerHTML;
 const resultDisplay = document.getElementById('display2');
 const result = "";
 
-//create functions for the following: add, subtract, multiple, divide
+//operator functions
 const add = function(a,b) {
     return a + b;
   };
@@ -27,17 +28,41 @@ const divide = function(a,b) {
 
 function buildExpression (buttonSelect) {
     if (buttonSelect == 'AC') {
-        expressionDisplay.innerHTML = "";
+        expressionDisplay.innerHTML = "0";
         resultDisplay.innerHTML = "";
     } else {
+        if (expression == "0") {
+            expressionDisplay.innerHTML = "";
+        }
         expressionDisplay.innerHTML += buttonSelect;
     }
 }
 
-//create function that takes an operator and 2 numbers and then uses one of the above functions on the numbers
-//will need to change 'expression' to take 'expressionDisplay' as the argument once I get it working
+function stringScan () {
+    expression = expressionDisplay.innerHTML;
+    console.log('stringScan called');
+    let operatorCount = 0;
+    for (let i = 0; i < expression.length; i++) {
+        if ((expression[i].includes('+')) || (expression[i].includes('-')) ||
+         (expression[i].includes('x')) || (expression[i].includes('÷'))) {
+            operatorCount++;
+         };
+    console.log("operator count: " + operatorCount);
+    if (operatorCount === 2) {
+        //need to find a way to temporarily remove last operator from expression before operating
+        //returns NaN if running operate before removing
+        //don't want to permanently remove bc I will need to use that operator for next round of equation
+        operate();
+    }
+    }
+}
+
+const btns = document.getElementsByClassName("btn");
+for (const btn of btns) {
+    btn.addEventListener("click", stringScan);
+}
+
 function operate() {
-    let expression = expressionDisplay.innerHTML;
     let result = 0;
 
     if (expression.includes('+')) {
@@ -73,14 +98,18 @@ function operate() {
         result = numberArray.reduce(divide);
         resultDisplay.innerHTML = result;
     }   
+    console.log("result: " + result)
+}
 
 //build function or edit function so result is 
 //displayed either after pressing = or after
 //pressing another operator after 2nd number
-if array.length 
+//function should call operate() if it meets
+//the requirement
+//do i need to create a variable for the first
+//array item, and then replace the value after a
+//2nd operator is selected?
 
-    console.log(result)
 
-}
 
 //parseInt will only work for non decimal numbers
