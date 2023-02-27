@@ -1,11 +1,5 @@
-//1. find operator
-//2. find operator inputs (only 2)
-    //2.1 convert inputs to numbers
-//3. apply operators to number inputs and display result each time we apply an operator to 2 numbers (PEMDAS doesn't matter at this point)
-
 const expressionDisplay = document.getElementById('display1');
 expressionDisplay.innerHTML = "0";
-let expression = expressionDisplay.innerHTML;
 const resultDisplay = document.getElementById('display2');
 const result = "";
 
@@ -31,75 +25,138 @@ function buildExpression (buttonSelect) {
         expressionDisplay.innerHTML = "0";
         resultDisplay.innerHTML = "";
     } else {
-        if (expression == "0") {
+        if (expressionDisplay.innerHTML == "0") {
             expressionDisplay.innerHTML = "";
         }
         expressionDisplay.innerHTML += buttonSelect;
     }
 }
 
-function stringScan () {
-    expression = expressionDisplay.innerHTML;
-    console.log('stringScan called');
-    let operatorCount = 0;
-    for (let i = 0; i < expression.length; i++) {
-        if ((expression[i].includes('+')) || (expression[i].includes('-')) ||
-         (expression[i].includes('x')) || (expression[i].includes('÷'))) {
-            operatorCount++;
+//1. check if 2 operators. if so, move onto 2
+function operatorCount(localExpression) {
+    let singleOperator = true;
+    let operatorNum = 0;
+    for (let i = 0; i < localExpression.length; i++) {
+        if ((localExpression[i].includes('+')) || (localExpression[i].includes('-')) ||
+         (localExpression[i].includes('x')) || (localExpression[i].includes('÷'))) {
+            operatorNum++;
          };
-    console.log("operator count: " + operatorCount);
-    if (operatorCount === 2) {
-        //need to find a way to temporarily remove last operator from expression before operating
-        //returns NaN if running operate before removing
-        //don't want to permanently remove bc I will need to use that operator for next round of equation
-        operate();
-    }
-    }
+    };
+    console.log("operatorNum: " + operatorNum);
+    if (operatorNum === 2) {
+        singleOperator = false;
+    }; 
+    return singleOperator;
 }
 
-const btns = document.getElementsByClassName("btn");
-for (const btn of btns) {
-    btn.addEventListener("click", stringScan);
+//2 get #s to operate on. return newString without last character
+function removeSecondOperator(localExpression) {
+    let revisedString = '';
+    for (let i = 0; i < localExpression.length-1; i++) {
+        revisedString += localExpression[i];
+    }
+    console.log("revisedString: " + revisedString);
+    return revisedString;
 }
 
-function operate() {
+
+//3.1. identify operator. return operator
+function identifyFirstOperator(localExpression) {
+    let firstOperator = '';
+    if (localExpression.split('+').length == 2) {
+        console.log("split epxression: " + localExpression.split('+'));
+        firstOperator = '+';
+    } else if (localExpression.split('-').length == 2) {
+        console.log("split epxression: " + localExpression.split('-'));
+        firstOperator = '-';
+    } else if (localExpression.split('x').length == 2) {
+        console.log("split epxression: " + localExpression.split('x'));
+        firstOperator = 'x';
+    } else if (localExpression.split('÷'.length == 2)) {
+        console.log("split epxression: " + localExpression.split('÷'));
+        firstOperator = '÷';
+    };
+    
+    console.log("firstOperator: " + firstOperator);
+    return firstOperator;
+    
+}
+
+//3.2 take newString and make into number array. return numberArray
+function stringToNumberArray (stringExpression, operator) {
+    let stringArray = stringExpression.split(operator);
+    let numberArray = stringArray.map((constant) => {
+        return parseInt(constant);
+    });
+    console.log("numberArray: " + numberArray);
+    return numberArray;
+}
+
+//4. operate the #s. return result
+function operate(numberArray, operator) {
+    console.log('operate called');
     let result = 0;
 
-    if (expression.includes('+')) {
+    if (operator.includes('+')) {
         result = 0;
-        let stringArray = expression.split('+');
-        let numberArray = stringArray.map ((constant) => {
-            return parseInt(constant);
-        });
         result = numberArray.reduce(add);
         resultDisplay.innerHTML = result;
-    } else if (expression.includes('-')) {
-        let stringArray = expression.split('-');
-        let numberArray = stringArray.map ((constant) => {
-            return parseInt(constant);
-        });
+    } else if (operator.includes('-')) {
         result = numberArray.reduce(subtract);
         resultDisplay.innerHTML = result;
-    } else if (expression.includes('x')) {
+    } else if (operator.includes('x')) {
         result = 1;
-        let stringArray = expression.split('x');
-        let numberArray = stringArray.map ((constant) => {
-            return parseInt(constant);
-        });
         numberArray.forEach(num => {
             result *= num;
         });
         resultDisplay.innerHTML = result;
-    } else if (expression.includes('÷')) {
-        let stringArray = expression.split('÷');
-        let numberArray = stringArray.map ((constant) => {
-            return parseInt(constant);
-        });
+    } else if (operator.includes('÷')) {
         result = numberArray.reduce(divide);
         resultDisplay.innerHTML = result;
     }   
-    console.log("result: " + result)
+    console.log("result: " + result);
+    return result;
 }
+//5. update original expression with newString + 2nd removed operator
+function updateDisplay(result) {
+    console.log('updateDisplay called');
+    console.log("expressionDisplay: " + expressionDisplay.innerHTML)
+    console.log('updateDisplay preliminary result: '+result);
+    let singleOperator = operatorCount(expressionDisplay.innerHTML);
+    console.log(singleOperator);
+    if (singleOperator === true) {
+        expressionDisplay.innerHTML = result;
+        console.log("single result: " + expressionDisplay.innerHTML);
+    } else {
+        expressionDisplay.innerHTML = result += expressionDisplay.innerHTML.charAt(expressionDisplay.innerHTML.length-1);
+        console.log("double result: " + expressionDisplay.innerHTML);
+    }; 
+}
+
+function buttonClick() {
+    let singleOperator = operatorCount(expressionDisplay.innerHTML);
+    console.log("buttonClick singleOperator: " + singleOperator);
+    if (singleOperator === false) {
+        let revisedString = removeSecondOperator(expressionDisplay.innerHTML);
+        let operator = identifyFirstOperator(revisedString);
+        let numberArray = stringToNumberArray(revisedString, operator);
+        let result = operate(numberArray, operator);
+        updateDisplay(result);
+    }; 
+}
+
+const btns = document.getElementsByClassName("btn");
+for (const btn of btns) {
+    btn.addEventListener("click", buttonClick);
+}
+
+function equalsButton () {
+    let operator = identifyFirstOperator(expressionDisplay.innerHTML);
+    let numberArray = stringToNumberArray(expressionDisplay.innerHTML, operator);
+    operate(numberArray, operator);
+}
+
+
 
 //build function or edit function so result is 
 //displayed either after pressing = or after
