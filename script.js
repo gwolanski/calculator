@@ -23,7 +23,7 @@ const divide = function(a,b) {
 function buildExpression (buttonSelect) {
     if (buttonSelect == 'AC') {
         expressionDisplay.innerHTML = "0";
-        resultDisplay.innerHTML = "";
+       // resultDisplay.innerHTML = "";
     } else {
         if (expressionDisplay.innerHTML == "0") {
             expressionDisplay.innerHTML = "";
@@ -100,19 +100,15 @@ function operate(numberArray, operator) {
     if (operator.includes('+')) {
         result = 0;
         result = numberArray.reduce(add);
-        resultDisplay.innerHTML = result;
     } else if (operator.includes('-')) {
         result = numberArray.reduce(subtract);
-        resultDisplay.innerHTML = result;
     } else if (operator.includes('x')) {
         result = 1;
         numberArray.forEach(num => {
             result *= num;
         });
-        resultDisplay.innerHTML = result;
     } else if (operator.includes('÷')) {
         result = numberArray.reduce(divide);
-        resultDisplay.innerHTML = result;
     }   
     console.log("result: " + result);
     return result;
@@ -123,7 +119,7 @@ function updateDisplay(result) {
     console.log("expressionDisplay: " + expressionDisplay.innerHTML)
     console.log('updateDisplay preliminary result: '+result);
     let singleOperator = operatorCount(expressionDisplay.innerHTML);
-    console.log(singleOperator);
+    console.log("single operator? " + singleOperator);
     if (singleOperator === true) {
         expressionDisplay.innerHTML = result;
         console.log("single result: " + expressionDisplay.innerHTML);
@@ -153,8 +149,9 @@ for (const btn of btns) {
 function equalsButton () {
     let operator = identifyFirstOperator(expressionDisplay.innerHTML);
     let numberArray = stringToNumberArray(expressionDisplay.innerHTML, operator);
-    operate(numberArray, operator);
-}
+    let result = operate(numberArray, operator);
+    updateDisplay(result)
+;}
 
 
 
