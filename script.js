@@ -150,20 +150,51 @@ function equalsButton () {
     let operator = identifyFirstOperator(expressionDisplay.innerHTML);
     let numberArray = stringToNumberArray(expressionDisplay.innerHTML, operator);
     let result = operate(numberArray, operator);
-    updateDisplay(result)
+    updateDisplay(result);
 ;}
 
+// const equals = document.getElementById("equals");
+// equals.addEventListener("click", () => {
+//     equals.setAttribute("class", "operated");
+//     console.log("class name for equals: " + equals.className); 
+//     postOperate();
+// })
 
+// function postOperate() {
+//     const numberBtns = document.getElementsByClassName("number");
+//     if (equals.className === 'operated') {
+//         for (const btn of numberBtns) {
+//             btn.addEventListener("click", () => {
+//                 expressionDisplay.innerHTML = "";
+//                 equals.classList.remove("operated");
+//             })
+//         }
+//     } else {
+//         console.log("you are out of the loop");
+//     }
+// }
 
-//build function or edit function so result is 
-//displayed either after pressing = or after
-//pressing another operator after 2nd number
-//function should call operate() if it meets
-//the requirement
-//do i need to create a variable for the first
-//array item, and then replace the value after a
-//2nd operator is selected?
-
+function deleteLastCharacter (localExpression) {
+    let revisedString = '';
+    for (let i = 0; i < localExpression.length-1; i++) {
+        revisedString += localExpression[i];
+    }
+    expressionDisplay.innerHTML = revisedString;
+}
 
 
 //parseInt will only work for non decimal numbers
+
+//After pressing equals, if a number is pressed I'd like to clear the display.
+    //I added a class of "number" to the # buttons as a first step.
+//After pressing equals, if an operator is pressed I'd like to append it to the currently displated result
+    //I added a class of "operator" to the operator buttons as a first step.
+
+//perhaps add an event listener to the equals sign that does the above 
+    //1. add event listener to equals that on click adds ID to equals btn
+    //2. if ID is true, run function for each button of buttons
+    //3. if btn class is number, run function that clears the display
+    //4. if btn class is operator, keep things as is since they alreay append
+    //5. remove ID
+
+
