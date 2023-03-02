@@ -95,7 +95,7 @@ function identifyFirstOperator(localExpression) {
     } else if (localExpression.split('x').length == 2) {
         console.log("split epxression: " + localExpression.split('x'));
         firstOperator = 'x';
-    } else if (localExpression.split('÷'.length == 2)) {
+    } else if (localExpression.split('÷').length == 2) {
         console.log("split epxression: " + localExpression.split('÷'));
         firstOperator = '÷';
     };
@@ -133,13 +133,16 @@ function operate(numberArray, operator) {
     } else if (operator.includes('÷')) {
         if (numberArray[1] === 0) {
             result = "💥💥💥💥💥💥💥";
-            (console.log("result(nah?): " + result))
         } else {
             result = numberArray.reduce(divide);
+            console.log("result: " + result);
         }
     }   
-    console.log("result: " + result);
-    return result;
+    
+    let modifiedResult = parseFloat(result.toFixed(10));
+    console.log("modified result: " + modifiedResult);
+    
+    return modifiedResult;
 }
 //5. update original expression with newString + 2nd removed operator
 function updateDisplay(result) {
