@@ -2,6 +2,7 @@ const expressionDisplay = document.getElementById('display1');
 expressionDisplay.innerHTML = "0";
 const resultDisplay = document.getElementById('display2');
 const result = "";
+let equalSelected = false;
 
 //operator functions
 const add = function(a,b) {
@@ -21,16 +22,38 @@ const divide = function(a,b) {
 };
 
 function buildExpression (buttonSelect) {
+    const equals = document.getElementById("equals");
+    const numberBtns = document.getElementsByClassName("number");
+
     if (buttonSelect == 'AC') {
         expressionDisplay.innerHTML = "0";
-       // resultDisplay.innerHTML = "";
     } else {
         if (expressionDisplay.innerHTML == "0") {
             expressionDisplay.innerHTML = "";
+        } else if (equalSelected == true) {
+            console.log("buildExpression function. equalSelected = true");
+            for (const btn of numberBtns) {
+                btn.addEventListener("click", () => {
+                    expressionDisplay.innerHTML = "";
+                    equalSelected = false;
+                    console.log("buildExpression. equalSelected: " + equalSelected)
+            })
         }
+        } 
         expressionDisplay.innerHTML += buttonSelect;
     }
 }
+
+
+//     if (equals.className === 'operated') {
+//         for (const btn of numberBtns) {
+//             btn.addEventListener("click", () => {
+//                 expressionDisplay.innerHTML = "";
+//                 equals.classList.remove("operated");
+//             })
+//         }
+//     }
+
 
 //1. check if 2 operators. if so, move onto 2
 function operatorCount(localExpression) {
@@ -96,7 +119,7 @@ function stringToNumberArray (stringExpression, operator) {
 function operate(numberArray, operator) {
     console.log('operate called');
     let result = 0;
-
+    (console.log("numberArray[1]: " + numberArray[1]));
     if (operator.includes('+')) {
         result = 0;
         result = numberArray.reduce(add);
@@ -108,14 +131,18 @@ function operate(numberArray, operator) {
             result *= num;
         });
     } else if (operator.includes('÷')) {
-        result = numberArray.reduce(divide);
+        if (numberArray[1] === 0) {
+            result = "💥💥💥💥💥💥💥";
+            (console.log("result(nah?): " + result))
+        } else {
+            result = numberArray.reduce(divide);
+        }
     }   
     console.log("result: " + result);
     return result;
 }
 //5. update original expression with newString + 2nd removed operator
 function updateDisplay(result) {
-    console.log('updateDisplay called');
     console.log("expressionDisplay: " + expressionDisplay.innerHTML)
     console.log('updateDisplay preliminary result: '+result);
     let singleOperator = operatorCount(expressionDisplay.innerHTML);
@@ -147,18 +174,15 @@ for (const btn of btns) {
 }
 
 function equalsButton () {
+    equalSelected = true;
+
     let operator = identifyFirstOperator(expressionDisplay.innerHTML);
     let numberArray = stringToNumberArray(expressionDisplay.innerHTML, operator);
     let result = operate(numberArray, operator);
     updateDisplay(result);
 ;}
 
-// const equals = document.getElementById("equals");
-// equals.addEventListener("click", () => {
-//     equals.setAttribute("class", "operated");
-//     console.log("class name for equals: " + equals.className); 
-//     postOperate();
-// })
+
 
 // function postOperate() {
 //     const numberBtns = document.getElementsByClassName("number");
@@ -185,9 +209,9 @@ function deleteLastCharacter (localExpression) {
 
 //parseInt will only work for non decimal numbers
 
-//After pressing equals, if a number is pressed I'd like to clear the display.
+//After pressing equals (when result is displayed), if a number is pressed I'd like to clear the display. Look at buildExpression function for inspiration.
     //I added a class of "number" to the # buttons as a first step.
-//After pressing equals, if an operator is pressed I'd like to append it to the currently displated result
+//After pressing equals (when result is displayed), if an operator is pressed I'd like to append it to the currently displated result
     //I added a class of "operator" to the operator buttons as a first step.
 
 //perhaps add an event listener to the equals sign that does the above 
@@ -197,4 +221,5 @@ function deleteLastCharacter (localExpression) {
     //4. if btn class is operator, keep things as is since they alreay append
     //5. remove ID
 
+    //another similar idea: after running an operation we can include in the function to set resultDisplayed = true. reset innerHTML if number pressed when true, then set to false
 
