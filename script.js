@@ -1,19 +1,21 @@
 const expressionDisplay = document.getElementById('display1');
 expressionDisplay.innerHTML = "0";
-const resultDisplay = document.getElementById('display2');
 const result = "";
 let equalSelected = false;
+let decimalInOperand = false;
+const btns = document.getElementsByClassName("btn");
+const numberBtns = document.getElementsByClassName("number");
 
 //operator functions
 const add = function(a,b) {
     return a + b;
   };
 
-const subtract = function(a, b) {
+const subtract = function(a,b) {
 	return a - b;
 };
 
-const multiply = function(array) {
+const multiply = function(a,b) {
     return a * b;
   };
 
@@ -22,38 +24,54 @@ const divide = function(a,b) {
 };
 
 function buildExpression (buttonSelect) {
-    const equals = document.getElementById("equals");
-    const numberBtns = document.getElementsByClassName("number");
-
+    if (isOperatorButton(buttonSelect)) {
+        decimalInOperand = false;
+        console.log("decimalInOperand: " + decimalInOperand)
+    }
+    if (equalSelected && isNumberButton(buttonSelect)) {
+        expressionDisplay.innerHTML = ""; 
+    }
+    equalSelected = false;
     if (buttonSelect == 'AC') {
         expressionDisplay.innerHTML = "0";
+        decimalInOperand = false;
     } else {
-        if (expressionDisplay.innerHTML == "0") {
+        if (expressionDisplay.innerHTML == "0" && buttonSelect == ".") {
+            expressionDisplay.innerHTML = "0";
+        } else if (expressionDisplay.innerHTML == "0") {
             expressionDisplay.innerHTML = "";
-        } else if (equalSelected == true) {
-            console.log("buildExpression function. equalSelected = true");
-            for (const btn of numberBtns) {
-                btn.addEventListener("click", () => {
-                    expressionDisplay.innerHTML = "";
-                    equalSelected = false;
-                    console.log("buildExpression. equalSelected: " + equalSelected)
-            })
         }
-        } 
         expressionDisplay.innerHTML += buttonSelect;
     }
 }
 
+function decimalButton() {
+    if (decimalInOperand) {
+    } else {
+        expressionDisplay.innerHTML += ".";    
+        decimalInOperand = true;
+        console.log("decimalButton. decimalInOperand: " + decimalInOperand);
+    }
+}
+    
 
-//     if (equals.className === 'operated') {
-//         for (const btn of numberBtns) {
-//             btn.addEventListener("click", () => {
-//                 expressionDisplay.innerHTML = "";
-//                 equals.classList.remove("operated");
-//             })
-//         }
-//     }
+function isNumberButton(buttonSelect) {
+    if (buttonSelect == '1' || buttonSelect == '2' || buttonSelect == '3' ||
+        buttonSelect == '4' || buttonSelect == '5' || buttonSelect == '6' || 
+        buttonSelect == '7' || buttonSelect == '8' || buttonSelect == '9' ||
+        buttonSelect == '0') {
+      return true;
+   }
+   return false;
+}
 
+function isOperatorButton(buttonSelect) {
+    if (buttonSelect == '+' || buttonSelect == '-' || buttonSelect == 'x' ||
+    buttonSelect == '÷' ) {
+        return true;
+    }
+    return false;
+}
 
 //1. check if 2 operators. if so, move onto 2
 function operatorCount(localExpression) {
@@ -65,7 +83,6 @@ function operatorCount(localExpression) {
             operatorNum++;
          };
     };
-    console.log("operatorNum: " + operatorNum);
     if (operatorNum === 2) {
         singleOperator = false;
     }; 
@@ -109,7 +126,7 @@ function identifyFirstOperator(localExpression) {
 function stringToNumberArray (stringExpression, operator) {
     let stringArray = stringExpression.split(operator);
     let numberArray = stringArray.map((constant) => {
-        return parseInt(constant);
+        return parseFloat(constant);
     });
     console.log("numberArray: " + numberArray);
     return numberArray;
@@ -132,36 +149,40 @@ function operate(numberArray, operator) {
         });
     } else if (operator.includes('÷')) {
         if (numberArray[1] === 0) {
-            result = "💥💥💥💥💥💥💥";
+           return "💥💥💥💥💥💥💥";
         } else {
             result = numberArray.reduce(divide);
             console.log("result: " + result);
         }
     }   
     
-    let modifiedResult = parseFloat(result.toFixed(10));
+    let modifiedResult = parseFloat(result.toFixed(13));
     console.log("modified result: " + modifiedResult);
     
     return modifiedResult;
 }
 //5. update original expression with newString + 2nd removed operator
 function updateDisplay(result) {
-    console.log("expressionDisplay: " + expressionDisplay.innerHTML)
-    console.log('updateDisplay preliminary result: '+result);
     let singleOperator = operatorCount(expressionDisplay.innerHTML);
-    console.log("single operator? " + singleOperator);
-    if (singleOperator === true) {
+
+    if (singleOperator) {
         expressionDisplay.innerHTML = result;
+        if (result.length > 15) {
+            expressionDisplay.innerHTML = result.substring(0,15);
+        }
         console.log("single result: " + expressionDisplay.innerHTML);
     } else {
-        expressionDisplay.innerHTML = result += expressionDisplay.innerHTML.charAt(expressionDisplay.innerHTML.length-1);
+        let doubleOperatorDisplay = result + expressionDisplay.innerHTML.charAt(expressionDisplay.innerHTML.length-1)
+        expressionDisplay.innerHTML = doubleOperatorDisplay;
+        if (doubleOperatorDisplay.length > 15) {
+            expressionDisplay.innerHTML = doubleOperatorDisplay.substring(0,15);
+        }
         console.log("double result: " + expressionDisplay.innerHTML);
     }; 
 }
 
 function buttonClick() {
     let singleOperator = operatorCount(expressionDisplay.innerHTML);
-    console.log("buttonClick singleOperator: " + singleOperator);
     if (singleOperator === false) {
         let revisedString = removeSecondOperator(expressionDisplay.innerHTML);
         let operator = identifyFirstOperator(revisedString);
@@ -169,12 +190,14 @@ function buttonClick() {
         let result = operate(numberArray, operator);
         updateDisplay(result);
     }; 
+
 }
 
-const btns = document.getElementsByClassName("btn");
+
 for (const btn of btns) {
     btn.addEventListener("click", buttonClick);
 }
+
 
 function equalsButton () {
     equalSelected = true;
@@ -183,23 +206,7 @@ function equalsButton () {
     let numberArray = stringToNumberArray(expressionDisplay.innerHTML, operator);
     let result = operate(numberArray, operator);
     updateDisplay(result);
-;}
-
-
-
-// function postOperate() {
-//     const numberBtns = document.getElementsByClassName("number");
-//     if (equals.className === 'operated') {
-//         for (const btn of numberBtns) {
-//             btn.addEventListener("click", () => {
-//                 expressionDisplay.innerHTML = "";
-//                 equals.classList.remove("operated");
-//             })
-//         }
-//     } else {
-//         console.log("you are out of the loop");
-//     }
-// }
+}
 
 function deleteLastCharacter (localExpression) {
     let revisedString = '';
@@ -208,21 +215,3 @@ function deleteLastCharacter (localExpression) {
     }
     expressionDisplay.innerHTML = revisedString;
 }
-
-
-//parseInt will only work for non decimal numbers
-
-//After pressing equals (when result is displayed), if a number is pressed I'd like to clear the display. Look at buildExpression function for inspiration.
-    //I added a class of "number" to the # buttons as a first step.
-//After pressing equals (when result is displayed), if an operator is pressed I'd like to append it to the currently displated result
-    //I added a class of "operator" to the operator buttons as a first step.
-
-//perhaps add an event listener to the equals sign that does the above 
-    //1. add event listener to equals that on click adds ID to equals btn
-    //2. if ID is true, run function for each button of buttons
-    //3. if btn class is number, run function that clears the display
-    //4. if btn class is operator, keep things as is since they alreay append
-    //5. remove ID
-
-    //another similar idea: after running an operation we can include in the function to set resultDisplayed = true. reset innerHTML if number pressed when true, then set to false
-
