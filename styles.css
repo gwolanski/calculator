@@ -1,11 +1,5 @@
-*, *::before, *::after {
+* {
     font-family: tahoma, palatino, courier, "goudy old style", "sans serif";
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    box-sizing: border-box;
 }
 
 body {
@@ -21,7 +15,7 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 30px;
     padding-bottom: 10px;
     background-color: rgb(82, 112, 107);
     box-shadow: 4px 4px 30px;
