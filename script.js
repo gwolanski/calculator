@@ -231,9 +231,6 @@ for (const btn of btns) {
 
 
 function equalsButton () {
-    //have the operation only move forward if there is an operator and two operands.
-    //if it can't meet these conditions, nothing happens.
-    
     equalSelected = true;
 
     let operator = identifyFirstOperator(expressionDisplay.innerHTML);
