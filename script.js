@@ -73,6 +73,14 @@ function isOperatorButton(buttonSelect) {
     return false;
 }
 
+function expressionContainsOperator() {
+    if ((expressionDisplay.innerHTML.includes('+')) || (expressionDisplay.innerHTML.includes('-')) ||
+    (expressionDisplay.innerHTML.includes('x')) || (expressionDisplay.innerHTML.includes('÷'))) {
+        return true;
+    }
+    return false;
+}
+
 //1. check if 2 operators. if so, move onto 2
 function operatorCount(localExpression) {
     let singleOperator = true;
@@ -129,32 +137,55 @@ function stringToNumberArray (stringExpression, operator) {
         return parseFloat(constant);
     });
     console.log("numberArray: " + numberArray);
+    if (numberArray[1] == NaN) {
+        console.log("butts");
+        return numberArray[0];  
+    } 
     return numberArray;
 }
 
 //4. operate the #s. return result
 function operate(numberArray, operator) {
     console.log('operate called');
+    console.log("length of numbeArray: " + numberArray.length)
     let result = 0;
-    (console.log("numberArray[1]: " + numberArray[1]));
-    if (operator.includes('+')) {
-        result = 0;
-        result = numberArray.reduce(add);
-    } else if (operator.includes('-')) {
-        result = numberArray.reduce(subtract);
-    } else if (operator.includes('x')) {
-        result = 1;
-        numberArray.forEach(num => {
-            result *= num;
-        });
-    } else if (operator.includes('÷')) {
-        if (numberArray[1] === 0) {
-           return "💥💥💥💥💥💥💥";
-        } else {
-            result = numberArray.reduce(divide);
-            console.log("result: " + result);
-        }
-    }   
+    if (numberArray.length == 1) {
+        result = numberArray[0];
+    } else {
+        if (operator.includes('+')) {
+            if (numberArray.includes(NaN)) {
+                result = numberArray[0] + numberArray[0];
+            } else {
+                result = 0;
+                result = numberArray.reduce(add);
+            }
+        } else if (operator.includes('-')) {
+            if (numberArray.includes(NaN)) {
+                result = numberArray[0] - numberArray[0];
+            } else {
+                result = numberArray.reduce(subtract);
+            }
+        } else if (operator.includes('x')) {
+            if (numberArray.includes(NaN)) {
+                result = numberArray[0] * numberArray[0];
+            } else {
+            result = 1;
+            numberArray.forEach(num => {
+                result *= num;
+            });
+            }
+        } else if (operator.includes('÷')) {
+            if (numberArray[1] === 0) {
+               return "💥💥💥💥💥💥💥";
+            } else if (numberArray.includes(NaN)) {
+                result = numberArray[0] / numberArray[0];
+            } else {
+                result = numberArray.reduce(divide);
+                console.log("result: " + result);
+            }
+        }   
+    }
+    
     
     let modifiedResult = parseFloat(result.toFixed(13));
     console.log("modified result: " + modifiedResult);
@@ -200,6 +231,9 @@ for (const btn of btns) {
 
 
 function equalsButton () {
+    //have the operation only move forward if there is an operator and two operands.
+    //if it can't meet these conditions, nothing happens.
+    
     equalSelected = true;
 
     let operator = identifyFirstOperator(expressionDisplay.innerHTML);
